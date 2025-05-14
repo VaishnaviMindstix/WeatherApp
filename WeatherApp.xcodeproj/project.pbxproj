@@ -78,13 +78,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B5093E152DD27277006C8C0C /* Module */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Module;
-			sourceTree = "<group>";
-		};
 		B55CDFFA2DD3649500BA87B6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -117,7 +110,6 @@
 			isa = PBXGroup;
 			children = (
 				B584FD132DD3621300BA7C35 /* WeatherAppUI */,
-				B5093E152DD27277006C8C0C /* Module */,
 				B584FD102DD31E5800BA7C35 /* AppDelegate.swift */,
 				B5ECD2412DCDEE5C0031DAC1 /* WeatherAppApp.swift */,
 				B55CDFFD2DD3686500BA87B6 /* ContentView.swift */,
