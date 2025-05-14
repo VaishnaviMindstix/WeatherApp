@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B55CDFFC2DD3649500BA87B6 /* WeatherAppUI in Frameworks */ = {isa = PBXBuildFile; productRef = B55CDFFB2DD3649500BA87B6 /* WeatherAppUI */; };
+		B55CDFFE2DD3686500BA87B6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55CDFFD2DD3686500BA87B6 /* ContentView.swift */; };
+		B584FD0F2DD31DF500BA7C35 /* netfox in Frameworks */ = {isa = PBXBuildFile; productRef = B584FD0E2DD31DF500BA7C35 /* netfox */; };
+		B584FD112DD31E5800BA7C35 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B584FD102DD31E5800BA7C35 /* AppDelegate.swift */; };
 		B5ECD2422DCDEE5C0031DAC1 /* WeatherAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5ECD2412DCDEE5C0031DAC1 /* WeatherAppApp.swift */; };
-		B5ECD2442DCDEE5C0031DAC1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5ECD2432DCDEE5C0031DAC1 /* ContentView.swift */; };
 		B5ECD2462DCDEE600031DAC1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5ECD2452DCDEE600031DAC1 /* Assets.xcassets */; };
 		B5ECD2492DCDEE600031DAC1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5ECD2482DCDEE600031DAC1 /* Preview Assets.xcassets */; };
 		B5ECD2532DCDEE600031DAC1 /* WeatherAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5ECD2522DCDEE600031DAC1 /* WeatherAppTests.swift */; };
@@ -34,9 +37,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B55CDFFD2DD3686500BA87B6 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B584FD102DD31E5800BA7C35 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B584FD132DD3621300BA7C35 /* WeatherAppUI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = WeatherAppUI; sourceTree = "<group>"; };
 		B5ECD23E2DCDEE5C0031DAC1 /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5ECD2412DCDEE5C0031DAC1 /* WeatherAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAppApp.swift; sourceTree = "<group>"; };
-		B5ECD2432DCDEE5C0031DAC1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B5ECD2452DCDEE600031DAC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B5ECD2482DCDEE600031DAC1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B5ECD24E2DCDEE600031DAC1 /* WeatherAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WeatherAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -51,6 +56,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B584FD0F2DD31DF500BA7C35 /* netfox in Frameworks */,
+				B55CDFFC2DD3649500BA87B6 /* WeatherAppUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -71,6 +78,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B5093E152DD27277006C8C0C /* Module */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Module;
+			sourceTree = "<group>";
+		};
+		B55CDFFA2DD3649500BA87B6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B5ECD2352DCDEE5C0031DAC1 = {
 			isa = PBXGroup;
 			children = (
@@ -78,6 +99,7 @@
 				B5ECD2512DCDEE600031DAC1 /* WeatherAppTests */,
 				B5ECD25B2DCDEE600031DAC1 /* WeatherAppUITests */,
 				B5ECD23F2DCDEE5C0031DAC1 /* Products */,
+				B55CDFFA2DD3649500BA87B6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,8 +116,11 @@
 		B5ECD2402DCDEE5C0031DAC1 /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
+				B584FD132DD3621300BA7C35 /* WeatherAppUI */,
+				B5093E152DD27277006C8C0C /* Module */,
+				B584FD102DD31E5800BA7C35 /* AppDelegate.swift */,
 				B5ECD2412DCDEE5C0031DAC1 /* WeatherAppApp.swift */,
-				B5ECD2432DCDEE5C0031DAC1 /* ContentView.swift */,
+				B55CDFFD2DD3686500BA87B6 /* ContentView.swift */,
 				B5ECD2452DCDEE600031DAC1 /* Assets.xcassets */,
 				B5ECD2472DCDEE600031DAC1 /* Preview Content */,
 			);
@@ -143,6 +168,10 @@
 			dependencies = (
 			);
 			name = WeatherApp;
+			packageProductDependencies = (
+				B584FD0E2DD31DF500BA7C35 /* netfox */,
+				B55CDFFB2DD3649500BA87B6 /* WeatherAppUI */,
+			);
 			productName = WeatherApp;
 			productReference = B5ECD23E2DCDEE5C0031DAC1 /* WeatherApp.app */;
 			productType = "com.apple.product-type.application";
@@ -215,6 +244,9 @@
 				Base,
 			);
 			mainGroup = B5ECD2352DCDEE5C0031DAC1;
+			packageReferences = (
+				B584FD0D2DD31DF500BA7C35 /* XCRemoteSwiftPackageReference "netfox" */,
+			);
 			productRefGroup = B5ECD23F2DCDEE5C0031DAC1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -257,8 +289,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B5ECD2442DCDEE5C0031DAC1 /* ContentView.swift in Sources */,
 				B5ECD2422DCDEE5C0031DAC1 /* WeatherAppApp.swift in Sources */,
+				B584FD112DD31E5800BA7C35 /* AppDelegate.swift in Sources */,
+				B55CDFFE2DD3686500BA87B6 /* ContentView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,7 +463,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.practice.WeatherApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vaishnavi.WeatherApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -459,7 +492,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.practice.WeatherApp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.vaishnavi.WeatherApp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -583,6 +616,29 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B584FD0D2DD31DF500BA7C35 /* XCRemoteSwiftPackageReference "netfox" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kasketis/netfox";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B55CDFFB2DD3649500BA87B6 /* WeatherAppUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WeatherAppUI;
+		};
+		B584FD0E2DD31DF500BA7C35 /* netfox */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B584FD0D2DD31DF500BA7C35 /* XCRemoteSwiftPackageReference "netfox" */;
+			productName = netfox;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B5ECD2362DCDEE5C0031DAC1 /* Project object */;
 }
