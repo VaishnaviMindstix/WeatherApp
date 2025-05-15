@@ -8,6 +8,15 @@
         "revision" : "557576032736fd3140422baefb68b8f76c55088f",
         "version" : "1.21.0"
       }
+    },
+    {
+      "identity" : "weatherappuipackage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/VaishnaviMindstix/WeatherAppUIPackage",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7dfbae3afda491a48255ad0d76efe8634386804f"
+      }
     }
   ],
   "version" : 2

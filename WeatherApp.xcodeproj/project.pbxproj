@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B55CDFFC2DD3649500BA87B6 /* WeatherAppUI in Frameworks */ = {isa = PBXBuildFile; productRef = B55CDFFB2DD3649500BA87B6 /* WeatherAppUI */; };
+		B52C5E642DD60A5B003FEE7A /* WeatherAppUI in Frameworks */ = {isa = PBXBuildFile; productRef = B52C5E632DD60A5B003FEE7A /* WeatherAppUI */; };
 		B55CDFFE2DD3686500BA87B6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55CDFFD2DD3686500BA87B6 /* ContentView.swift */; };
 		B55CE00C2DD4C75500BA87B6 /* CityEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55CE0022DD4C75500BA87B6 /* CityEntity.swift */; };
 		B55CE00D2DD4C75500BA87B6 /* CityPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B55CE0042DD4C75500BA87B6 /* CityPresenter.swift */; };
@@ -47,7 +47,6 @@
 		B55CE0092DD4C75500BA87B6 /* CityInteractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityInteractor.swift; sourceTree = "<group>"; };
 		B55CE00B2DD4C75500BA87B6 /* WeatherRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WeatherRouter.swift; sourceTree = "<group>"; };
 		B584FD102DD31E5800BA7C35 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		B584FD132DD3621300BA7C35 /* WeatherAppUI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = WeatherAppUI; sourceTree = "<group>"; };
 		B5ECD23E2DCDEE5C0031DAC1 /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5ECD2412DCDEE5C0031DAC1 /* WeatherAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAppApp.swift; sourceTree = "<group>"; };
 		B5ECD2452DCDEE600031DAC1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -65,7 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B584FD0F2DD31DF500BA7C35 /* netfox in Frameworks */,
-				B55CDFFC2DD3649500BA87B6 /* WeatherAppUI in Frameworks */,
+				B52C5E642DD60A5B003FEE7A /* WeatherAppUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,7 +168,6 @@
 		B5ECD2402DCDEE5C0031DAC1 /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
-				B584FD132DD3621300BA7C35 /* WeatherAppUI */,
 				B584FD102DD31E5800BA7C35 /* AppDelegate.swift */,
 				B55CE0002DD4C75500BA87B6 /* Module */,
 				B5ECD2412DCDEE5C0031DAC1 /* WeatherAppApp.swift */,
@@ -222,7 +220,7 @@
 			name = WeatherApp;
 			packageProductDependencies = (
 				B584FD0E2DD31DF500BA7C35 /* netfox */,
-				B55CDFFB2DD3649500BA87B6 /* WeatherAppUI */,
+				B52C5E632DD60A5B003FEE7A /* WeatherAppUI */,
 			);
 			productName = WeatherApp;
 			productReference = B5ECD23E2DCDEE5C0031DAC1 /* WeatherApp.app */;
@@ -298,6 +296,7 @@
 			mainGroup = B5ECD2352DCDEE5C0031DAC1;
 			packageReferences = (
 				B584FD0D2DD31DF500BA7C35 /* XCRemoteSwiftPackageReference "netfox" */,
+				B52C5E622DD60A5B003FEE7A /* XCRemoteSwiftPackageReference "WeatherAppUIPackage" */,
 			);
 			productRefGroup = B5ECD23F2DCDEE5C0031DAC1 /* Products */;
 			projectDirPath = "";
@@ -674,6 +673,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B52C5E622DD60A5B003FEE7A /* XCRemoteSwiftPackageReference "WeatherAppUIPackage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/VaishnaviMindstix/WeatherAppUIPackage";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		B584FD0D2DD31DF500BA7C35 /* XCRemoteSwiftPackageReference "netfox" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kasketis/netfox";
@@ -685,8 +692,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B55CDFFB2DD3649500BA87B6 /* WeatherAppUI */ = {
+		B52C5E632DD60A5B003FEE7A /* WeatherAppUI */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = B52C5E622DD60A5B003FEE7A /* XCRemoteSwiftPackageReference "WeatherAppUIPackage" */;
 			productName = WeatherAppUI;
 		};
 		B584FD0E2DD31DF500BA7C35 /* netfox */ = {
