@@ -9,23 +9,35 @@ import SwiftUI
 import WeatherAppUI
 
 struct ContentView: View {
-    @State private var isNavigating = false
+    @State private var selectedCity: City?
     
     var body: some View {
-        NavigationView{ // for ios version 16+ use NavigationStack
+        NavigationView {
             VStack {
-                NavigationLink(destination: WeatherRouter.createModule(), isActive: $isNavigating) {
+                NavigationLink(
+                    destination: navigationDestination,
+                    isActive: Binding(
+                        get: { selectedCity != nil },
+                        set: { isActive in if !isActive { selectedCity = nil } }
+                    )
+                ) {
                     EmptyView()
                 }
                 
-                Button {
-                    isNavigating = true
-                } label: {
-                    WeatherButton(title: "Check Weather", backgroundColor: .green, textColor: .white)
+                CityRouter.build { city in
+                    selectedCity = city
                 }
             }
         }
-        .foregroundColor(.white)
+    }
+    
+    @ViewBuilder
+    private var navigationDestination: some View {
+        if let city = selectedCity {
+            WeatherRouter.createModule(city: city, apiKey: Secrets.apiKey)
+        } else {
+            EmptyView()
+        }
     }
 }
 
@@ -35,3 +47,4 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+

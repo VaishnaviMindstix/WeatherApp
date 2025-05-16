@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import SwiftUI
+import WeatherAppUI
 
 final class CityRouter {
-    static func createModule() -> ContentView {
-        let presenter = CityPresenter()
-        let interactor = CityInteractor()
-//        presenter.interactor = interactor
-//        interactor.presenter = presenter
-        return ContentView()
+    static func build(onCitySelected: @escaping (City) -> Void) -> some View {
+        let interactor = CitySearchInteractor()
+        let presenter = CitySearchPresenter(interactor: interactor)
+        presenter.onCitySelected = onCitySelected
+        return CitySearchView(presenter: presenter)
     }
 }
 

@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kasketis/netfox",
       "state" : {
-        "revision" : "557576032736fd3140422baefb68b8f76c55088f",
-        "version" : "1.21.0"
+        "branch" : "develop",
+        "revision" : "150d41ac4e3b49d80bc5508c5c6895ca057e5d8e"
       }
     },
     {
@@ -15,7 +15,7 @@
       "location" : "https://github.com/VaishnaviMindstix/WeatherAppUIPackage",
       "state" : {
         "branch" : "main",
-        "revision" : "7dfbae3afda491a48255ad0d76efe8634386804f"
+        "revision" : "6737836ee9fd8ccf977d07d6cf199574d9c5bfdc"
       }
     }
   ],
