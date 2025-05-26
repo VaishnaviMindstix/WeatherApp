@@ -12,7 +12,7 @@ struct ContentView: View {
     @State private var selectedCity: City?
     
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack {
                 NavigationLink(
                     destination: navigationDestination,
@@ -35,6 +35,7 @@ struct ContentView: View {
     private var navigationDestination: some View {
         if let city = selectedCity {
             WeatherRouter.createModule(city: city, apiKey: Secrets.apiKey)
+                .foregroundColor(.white)
         } else {
             EmptyView()
         }

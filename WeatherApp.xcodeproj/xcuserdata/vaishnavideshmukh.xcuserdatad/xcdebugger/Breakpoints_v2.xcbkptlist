@@ -3,4 +3,22 @@
    uuid = "1707DD64-7ABB-4D85-9FBD-6F893FA795E7"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D1B936D0-4C8F-4A4A-A4AC-A7946C6F08A3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../../Library/Developer/Xcode/DerivedData/WeatherApp-gqtrsojkimlelvdmxnvkfqonmkaf/SourcePackages/checkouts/WeatherAppUIPackage/Sources/WeatherAppUI/Module/Interactor/WeatherInteractor.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "133"
+            endingLineNumber = "133"
+            landmarkName = "fetchWeather()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
