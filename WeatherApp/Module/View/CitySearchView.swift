@@ -10,6 +10,7 @@ import WeatherAppUI
 
 struct CitySearchView: View {
     @ObservedObject var presenter: CitySearchPresenter
+    @State private var showHistory: Bool = false // Step 1: Navigation state
     
     var body: some View {
         ZStack {
@@ -64,6 +65,24 @@ struct CitySearchView: View {
                 }
                 
                 Spacer()
+                
+                // Step 3: Add History Button + NavigationLink
+                NavigationLink(
+                    destination: WeatherHistoryRouter.createModule(),
+                    isActive: $showHistory
+                ) {
+                    EmptyView()
+                }
+                
+                Button {
+                    showHistory = true
+                } label: {
+                    WeatherButton(
+                        title: "Show\nWeather History",
+                        backgroundColor: Color("BlueColor"),
+                        textColor: Color.white, height: 80
+                    )
+                }
             }
             .padding(.top)
         }
