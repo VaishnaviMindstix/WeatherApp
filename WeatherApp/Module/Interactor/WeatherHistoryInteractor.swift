@@ -2,8 +2,8 @@ import Foundation
 import CoreData
 
 protocol WeatherHistoryInteractorProtocol {
-    func fetchWeatherItems() -> [WeatherDataSharedModel]
-    func addWeatherItem(_ item: WeatherDataSharedModel)
+    func fetchWeatherItems() -> [WeatherDataModel]
+    func addWeatherItem(_ item: WeatherDataModel)
     func deleteItem(at offsets: IndexSet)
 }
 
@@ -14,13 +14,13 @@ final class WeatherHistoryInteractor: WeatherHistoryInteractorProtocol {
         self.context = context
     }
 
-    func fetchWeatherItems() -> [WeatherDataSharedModel] {
+    func fetchWeatherItems() -> [WeatherDataModel] {
         let request: NSFetchRequest<Item> = Item.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(keyPath: \Item.city, ascending: true)]
         guard let results = try? context.fetch(request) else { return [] }
 
         return results.map {
-            WeatherDataSharedModel(
+            WeatherDataModel(
                 city: $0.city ?? "--",
                 date: $0.date ?? "--",
                 isNight: $0.isNight,
@@ -35,7 +35,7 @@ final class WeatherHistoryInteractor: WeatherHistoryInteractorProtocol {
         }
     }
 
-    func addWeatherItem(_ item: WeatherDataSharedModel) {
+    func addWeatherItem(_ item: WeatherDataModel) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM dd, yyyy"
         

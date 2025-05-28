@@ -11,17 +11,17 @@ import Foundation
 
 protocol CitySearchPresenterProtocol: ObservableObject {
     var query: String { get set }
-    var suggestions: [City] { get }
-    func cityTapped(_ city: City)
+    var suggestions: [CityModel] { get }
+    func cityTapped(_ city: CityModel)
 }
 
 class CitySearchPresenter: CitySearchPresenterProtocol, ObservableObject {
     @Published var query: String = ""
-    @Published var suggestions: [City] = []
+    @Published var suggestions: [CityModel] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     
-    var onCitySelected: ((City) -> Void)?
+    var onCitySelected: ((CityModel) -> Void)?
     
     private let interactor: CitySearchInteractorProtocol
     private var cancellables = Set<AnyCancellable>()
@@ -64,7 +64,7 @@ class CitySearchPresenter: CitySearchPresenterProtocol, ObservableObject {
         }
     }
     
-    func cityTapped(_ city: City) {
+    func cityTapped(_ city: CityModel) {
         query = city.name
         suggestions = []
         onCitySelected?(city)

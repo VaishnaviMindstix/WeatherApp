@@ -8,7 +8,6 @@
 import XCTest
 @testable import WeatherApp
 
-@available(iOS 13.0, *)
 final class WeatherInteractorTests: XCTestCase {
 
     func testParseDateInfo_returnsCorrectValues() {

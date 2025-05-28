@@ -26,7 +26,7 @@ final class WeatherPresenterTests: XCTestCase {
     
     func testDidFetchWeatherUpdatesPropertiesCorrectly() {
         let sampleForecastDay = [
-            ForecastSharedModel(
+            ForecastModel(
                 date: "2025-05-15 09:00:00",
                 isNight: false,
                 day: "Thursday",
@@ -38,7 +38,7 @@ final class WeatherPresenterTests: XCTestCase {
         ]
         
         let sampleForecastNight = [
-            ForecastSharedModel(
+            ForecastModel(
                 date: "2025-05-15 21:00:00",
                 isNight: true,
                 day: "Thursday",
@@ -49,7 +49,7 @@ final class WeatherPresenterTests: XCTestCase {
             )
         ]
         
-        let weatherData = WeatherDataSharedModel(
+        let weatherData = WeatherDataModel(
             city: "Pune",
             date: "May 15",
             isNight: false,

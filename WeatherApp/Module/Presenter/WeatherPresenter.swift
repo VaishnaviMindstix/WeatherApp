@@ -8,7 +8,7 @@
 import Foundation
 
 protocol WeatherPresenterProtocol {
-    func didFetchWeather(_ data: WeatherDataSharedModel, city: City)
+    func didFetchWeather(_ data: WeatherDataModel, city: CityModel)
     func didFailFetchingWeather(_ error: Error)
 }
 
@@ -22,12 +22,12 @@ class WeatherPresenter: ObservableObject, WeatherPresenterProtocol {
     @Published var tempText                  = "--"
     @Published var conditionText             = "Error"
     @Published var symbolNameText            = "--"
-    @Published var forecastDay: [ForecastSharedModel]?
-    @Published var forecastNight: [ForecastSharedModel]?
+    @Published var forecastDay: [ForecastModel]?
+    @Published var forecastNight: [ForecastModel]?
     
     var interactor: WeatherInteractorProtocol?
     
-    func didFetchWeather(_ data: WeatherDataSharedModel, city: City) {
+    func didFetchWeather(_ data: WeatherDataModel, city: CityModel) {
         cityNameText    = city.name
         countryNameText = city.country ?? ""
         dateText        = data.date

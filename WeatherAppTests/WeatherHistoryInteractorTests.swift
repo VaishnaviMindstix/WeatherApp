@@ -44,7 +44,7 @@ final class WeatherHistoryInteractorTests: XCTestCase {
         formatter.dateFormat = "MMM dd, yyyy"
         let today = formatter.string(from: Date())
         
-        let model = WeatherDataSharedModel(
+        let model = WeatherDataModel(
             city: "New York",
             date: today,
             isNight: false,
@@ -72,7 +72,7 @@ final class WeatherHistoryInteractorTests: XCTestCase {
         formatter.dateFormat = "MMM dd, yyyy"
         let today = formatter.string(from: Date())
         
-        let model = WeatherDataSharedModel(
+        let model = WeatherDataModel(
             city: "New York",
             date: today,
             isNight: false,
@@ -100,7 +100,7 @@ final class WeatherHistoryInteractorTests: XCTestCase {
         let oldDate = formatter.string(from: Calendar.current.date(byAdding: .day, value: -11, to: Date())!)
         let newDate = formatter.string(from: Date())
         
-        let oldItem = WeatherDataSharedModel(
+        let oldItem = WeatherDataModel(
             city: "OldCity",
             date: oldDate,
             isNight: false,
@@ -113,7 +113,7 @@ final class WeatherHistoryInteractorTests: XCTestCase {
             forecastNight: []
         )
         
-        let newItem = WeatherDataSharedModel(
+        let newItem = WeatherDataModel(
             city: "NewCity",
             date: newDate,
             isNight: false,

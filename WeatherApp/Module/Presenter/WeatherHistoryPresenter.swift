@@ -1,11 +1,10 @@
 import Foundation
 import Combine
 
-@available(iOS 13.0, *)
 final class WeatherHistoryPresenter: ObservableObject {
     private let interactor: WeatherHistoryInteractorProtocol
 
-    @Published var items: [WeatherDataSharedModel] = []
+    @Published var items: [WeatherDataModel] = []
 
     init(interactor: WeatherHistoryInteractorProtocol) {
         self.interactor = interactor
@@ -15,12 +14,12 @@ final class WeatherHistoryPresenter: ObservableObject {
         items = interactor.fetchWeatherItems()
     }
 
-    func addItem(data: WeatherDataSharedModel){
+    func addItem(data: WeatherDataModel){
         interactor.addWeatherItem(data)
         loadItems()
     }
     func addSampleItem() {
-        let model = WeatherDataSharedModel(
+        let model = WeatherDataModel(
             city: "--",
             date: "--- 00, 0000",
             isNight: true,

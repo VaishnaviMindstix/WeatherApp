@@ -8,19 +8,18 @@
 import XCTest
 @testable import WeatherApp
 
-@available(iOS 13.0, *)
 final class WeatherHistoryPresenterTests: XCTestCase {
     
     final class MockWeatherHistoryInteractor: WeatherHistoryInteractorProtocol {
-        var weatherItems: [WeatherDataSharedModel] = []
+        var weatherItems: [WeatherDataModel] = []
         var addItemCalled = false
         var deleteItemCalled = false
         
-        func fetchWeatherItems() -> [WeatherDataSharedModel] {
+        func fetchWeatherItems() -> [WeatherDataModel] {
             return weatherItems
         }
         
-        func addWeatherItem(_ item: WeatherDataSharedModel) {
+        func addWeatherItem(_ item: WeatherDataModel) {
             addItemCalled = true
             weatherItems.append(item)
         }
@@ -80,8 +79,8 @@ final class WeatherHistoryPresenterTests: XCTestCase {
         XCTAssertEqual(presenter.items.first?.city, "City 2")
     }
 
-    private func sampleItem(city: String = "Test City") -> WeatherDataSharedModel {
-        WeatherDataSharedModel(
+    private func sampleItem(city: String = "Test City") -> WeatherDataModel {
+        WeatherDataModel(
             city: city,
             date: "May 27, 2025",
             isNight: false,

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var selectedCity: City?
+    @State private var selectedCity: CityModel?
     
     var body: some View {
         NavigationStack {

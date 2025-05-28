@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 final class CityRouter {
-    static func build(onCitySelected: @escaping (City) -> Void) -> some View {
+    static func build(onCitySelected: @escaping (CityModel) -> Void) -> some View {
         let interactor = CitySearchInteractor()
         let presenter = CitySearchPresenter(interactor: interactor)
         presenter.onCitySelected = onCitySelected

@@ -8,13 +8,13 @@
 import Foundation
 
 protocol CitySearchInteractorProtocol {
-    func fetchCitySuggestions(for query: String, completion: @escaping ([City], Error?) -> Void)
+    func fetchCitySuggestions(for query: String, completion: @escaping ([CityModel], Error?) -> Void)
 }
 
 class CitySearchInteractor: CitySearchInteractorProtocol {
     private let apiKey = Secrets.apiKey
     
-    func fetchCitySuggestions(for query: String, completion: @escaping ([City], Error?) -> Void) {
+    func fetchCitySuggestions(for query: String, completion: @escaping ([CityModel], Error?) -> Void) {
         guard !query.isEmpty else {
             completion([], nil)
             return
@@ -39,7 +39,7 @@ class CitySearchInteractor: CitySearchInteractorProtocol {
             }
             
             do {
-                let cities = try JSONDecoder().decode([City].self, from: data)
+                let cities = try JSONDecoder().decode([CityModel].self, from: data)
                 completion(cities, nil)
             } catch {
                 completion([], error)
