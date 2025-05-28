@@ -62,9 +62,9 @@ final class WeatherPresenterTests: XCTestCase {
             forecastNight: sampleForecastNight
         )
         
-        let city = City(
+        let city = CityModel(
             name: "Pune",
-            localNames: LocalNames(kn: "", mr: "", ru: "", ta: "", ur: "", ja: "", pa: "", hi: "", en: "", ar: "", ml: "", uk: ""),
+            localNames: LocalNamesModel(kn: "", mr: "", ru: "", ta: "", ur: "", ja: "", pa: "", hi: "", en: "", ar: "", ml: "", uk: ""),
             lat: 18.5204,
             lon: 73.8567,
             country: "IN",

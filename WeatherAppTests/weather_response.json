@@ -1,0 +1,14 @@
+{
+    "list": [
+        {
+            "main": { "temp": 24.5 },
+            "weather": [{ "id": 800, "description": "clear sky" }],
+            "dt_txt": "2025-05-28 14:00:00"
+        },
+        {
+            "main": { "temp": 20.1 },
+            "weather": [{ "id": 801, "description": "few clouds" }],
+            "dt_txt": "2025-05-28 20:00:00"
+        }
+    ]
+}

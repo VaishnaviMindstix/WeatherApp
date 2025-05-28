@@ -62,17 +62,9 @@ struct OpenWeatherResponseModel: Codable {
 
 
 struct WeatherEntryModel: Codable {
-    let main: MainModel?
-    let weather: [WeatherModel]?
-    let dtTxt: String?
-    
-    enum CodingKeys: String, CodingKey {
-        case main, weather
-        case dtTxt = "dt_txt"
-    }
-}
-
-extension WeatherEntryModel {
+    let main: MainModel
+    let weather: [WeatherModel]
+    let dtTxt: String
     var date: Date {
         WeatherInteractor.inputFormatter.date(from: dtTxt) ?? Date()
     }
@@ -82,6 +74,11 @@ extension WeatherEntryModel {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: date)
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case main, weather
+        case dtTxt = "dt_txt"
     }
 }
 
@@ -112,4 +109,11 @@ struct CityModel: Identifiable, Decodable {
 
 struct LocalNamesModel: Codable {
     let kn, mr, ru, ta, ur, ja, pa, hi, en, ar, ml, uk: String?
+}
+
+enum WeatherError: Error {
+    case invalidURL
+    case invalidResponse
+    case noData
+    case parsingError(Error)
 }

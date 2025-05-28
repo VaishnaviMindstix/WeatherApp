@@ -13,6 +13,11 @@ protocol CitySearchInteractorProtocol {
 
 class CitySearchInteractor: CitySearchInteractorProtocol {
     private let apiKey = Secrets.apiKey
+    private let session: URLSession
+    
+    init(session: URLSession = .shared) {
+        self.session = session
+    }
     
     func fetchCitySuggestions(for query: String, completion: @escaping ([CityModel], Error?) -> Void) {
         guard !query.isEmpty else {
@@ -27,7 +32,7 @@ class CitySearchInteractor: CitySearchInteractorProtocol {
             return
         }
         
-        URLSession.shared.dataTask(with: url) { data, _, error in
+        session.dataTask(with: url) { data, _, error in
             if let error = error {
                 completion([], error)
                 return

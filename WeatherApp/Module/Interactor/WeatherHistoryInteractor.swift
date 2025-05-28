@@ -7,7 +7,7 @@ protocol WeatherHistoryInteractorProtocol {
     func deleteItem(at offsets: IndexSet)
 }
 
-final class WeatherHistoryInteractor: WeatherHistoryInteractorProtocol {
+class WeatherHistoryInteractor: WeatherHistoryInteractorProtocol {
     private let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext) {

@@ -16,160 +16,185 @@ class WeatherInteractor: WeatherInteractorProtocol {
     var presenter: WeatherPresenterProtocol?
     var interactorHistory: WeatherHistoryInteractor?
     
-    var apiKey: String = ""
-    var city: CityModel = CityModel(name: "Pune", localNames: LocalNamesModel(kn: "", mr: "", ru: "", ta: "", ur: "", ja: "", pa: "", hi: "", en: "", ar: "", ml: "", uk: ""), lat: 18.5204, lon: 73.8567, country: "IN", state: "Maharashtra")
+    var apiKey: String?
+    var urlSession: URLSession = .shared
+    
+    var city: CityModel = CityModel(
+        name: "Pune",
+        localNames: LocalNamesModel(kn: "", mr: "", ru: "", ta: "", ur: "", ja: "", pa: "", hi: "", en: "", ar: "", ml: "", uk: ""),
+        lat: 18.5204,
+        lon: 73.8567,
+        country: "IN",
+        state: "Maharashtra"
+    )
+    
+//    func fetchWeather() {
+//        guard let url = makeWeatherURL() else { return }
+//
+//        URLSession.shared.dataTask(with: url) { data, _, error in
+//            if let error = error {
+//                DispatchQueue.main.async {
+//                    self.presenter?.didFailFetchingWeather(error)
+//                }
+//                return
+//            }
+//
+//            guard let data = data else { return }
+//
+//            do {
+//                let response = try JSONDecoder().decode(OpenWeatherResponseModel.self, from: data)
+//                self.handleWeatherResponse(response)
+//            } catch {
+//                DispatchQueue.main.async {
+//                    self.presenter?.didFailFetchingWeather(error)
+//                }
+//            }
+//        }.resume()
+//    }
     
     func fetchWeather() {
-        let urlString =
-        "https://api.openweathermap.org/data/2.5/forecast?lat=\(city.lat)&lon=\(city.lon)&appid=\(apiKey)&units=metric"
-
-        guard let url = URL(string: urlString) else { return }
+        guard let url = makeWeatherURL() else {
+            presenter?.didFailFetchingWeather(WeatherError.invalidURL)
+            return
+        }
         
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            guard let data = data, error == nil else {
-                self.presenter?.didFailFetchingWeather(error!)
+        let task = urlSession.dataTask(with: url) { data, response, error in
+            if let error = error {
+                DispatchQueue.main.async {
+                    self.presenter?.didFailFetchingWeather(error)
+                }
+                return
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+                DispatchQueue.main.async {
+                    self.presenter?.didFailFetchingWeather(WeatherError.invalidResponse)
+                }
+                return
+            }
+            
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    self.presenter?.didFailFetchingWeather(WeatherError.noData)
+                }
                 return
             }
             
             do {
-                let decoded = try JSONDecoder().decode(OpenWeatherResponseModel.self, from: data)
-                let entries = decoded.list
-                
-                let now = Date()
-                
-                let inputFormatter = DateFormatter()
-                inputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-                inputFormatter.timeZone = TimeZone.current
-                
-                let currentEntry = entries.min(by: {
-                    guard let date1 = inputFormatter.date(from: $0.dt_txt),
-                          let date2 = inputFormatter.date(from: $1.dt_txt) else { return false }
-                    return abs(date1.timeIntervalSince(now)) < abs(date2.timeIntervalSince(now))
-                })
-                
-                guard let current = currentEntry,
-                      let currentDateInfo = self.parseDateInfo(from: current.dt_txt),
-                      let currentConditionId = current.weather.first?.id,
-                      let currentCondition = current.weather.first?.description else {
-                    DispatchQueue.main.async {
-                        self.presenter?.didFailFetchingWeather(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unable to determine current forecast"]))
-                    }
-                    return
-                }
-                
-                var groupedByDate: [String: [WeatherEntryModel]] = [:]
-                for entry in entries {
-                    if let date = inputFormatter.date(from: entry.dt_txt) {
-                        let keyFormatter = DateFormatter()
-                        keyFormatter.dateFormat = "yyyy-MM-dd"
-                        keyFormatter.timeZone = TimeZone.current
-                        let dayKey = keyFormatter.string(from: date)
-                        
-                        groupedByDate[dayKey, default: []].append(entry)
-                    }
-                }
-                
-                let sortedDays = groupedByDate.keys.sorted().prefix(5) // Next 5 days
-                var forecastDay: [ForecastModel] = []
-                var forecastNight: [ForecastModel] = []
-                
-                for day in sortedDays {
-                    let entriesForDay = groupedByDate[day] ?? []
-                    
-                    let dayEntry = entriesForDay.first(where: {
-                        if let date = inputFormatter.date(from: $0.dt_txt) {
-                            let hour = Calendar.current.component(.hour, from: date)
-                            return hour >= 6 && hour < 18
-                        }
-                        return false
-                    })
-                    
-                    let nightEntry = entriesForDay.first(where: {
-                        if let date = inputFormatter.date(from: $0.dt_txt) {
-                            let hour = Calendar.current.component(.hour, from: date)
-                            return hour < 6 || hour >= 18
-                        }
-                        return false
-                    })
-                    
-                    if let dayEntry = dayEntry,
-                       let info = self.parseDateInfo(from: dayEntry.dt_txt) {
-                        forecastDay.append(ForecastModel(
-                            date: info.formattedDate,
-                            isNight: info.isNight,
-                            day: info.shortDayOfWeek,
-                            temp: "\(Int(dayEntry.main.temp))°",
-                            condition: dayEntry.weather.first?.description ?? "N/A",
-                            conditionId: dayEntry.weather.first?.id ?? 0,
-                            symbolName: self.sfSymbolName(for: dayEntry.weather.first?.id ?? 0, isNight: info.isNight)
-                        ))
-                    }
-                    
-                    if let nightEntry = nightEntry,
-                       let info = self.parseDateInfo(from: nightEntry.dt_txt) {
-                        forecastNight.append(ForecastModel(
-                            date: info.formattedDate,
-                            isNight: info.isNight,
-                            day: info.shortDayOfWeek,
-                            temp: "\(Int(nightEntry.main.temp))°",
-                            condition: nightEntry.weather.first?.description ?? "N/A",
-                            conditionId: nightEntry.weather.first?.id ?? 0,
-                            symbolName: self.sfSymbolName(for: nightEntry.weather.first?.id ?? 0, isNight: info.isNight)
-                        ))
-                    }
-                }
-                
-                let weatherData = WeatherDataModel(
-                    city: self.city.name,
-                    date: currentDateInfo.formattedDate,
-                    isNight: currentDateInfo.isNight,
-                    day: currentDateInfo.shortDayOfWeek,
-                    currentTemp: "\(Int(current.main.temp))°",
-                    condition: currentCondition,
-                    conditionId: currentConditionId,
-                    symbolName: self.sfSymbolName(for: currentConditionId, isNight: currentDateInfo.isNight),
-                    forecastDay: forecastDay,
-                    forecastNight: forecastNight
-                )
-                
-                
-                
-                DispatchQueue.main.async {
-                    self.presenter?.didFetchWeather(weatherData, city: self.city)
-                    self.interactorHistory?.addWeatherItem(weatherData)
-                }
-                
+                let response = try JSONDecoder().decode(OpenWeatherResponseModel.self, from: data)
+                self.handleWeatherResponse(response)
             } catch {
                 DispatchQueue.main.async {
-                    self.presenter?.didFailFetchingWeather(error)
+                    self.presenter?.didFailFetchingWeather(WeatherError.parsingError(error))
                 }
             }
-            
-        }.resume()
+        }
+        
+        task.resume()
     }
     
-    func parseDateInfo(from dateTimeString: String) -> (formattedDate: String, isNight: Bool, shortDayOfWeek: String)? {
-        let inputFormatter = DateFormatter()
-        inputFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        inputFormatter.timeZone = TimeZone.current
+    // MARK: - Helpers
+    
+    func makeWeatherURL() -> URL? {
+        guard let apiKey = apiKey else { return nil }
+        let urlString = "https://api.openweathermap.org/data/2.5/forecast?lat=\(city.lat)&lon=\(city.lon)&appid=\(apiKey)&units=metric"
+        return URL(string: urlString)
+    }
+    
+    func handleWeatherResponse(_ response: OpenWeatherResponseModel) {
+        let entries = response.list
+        let now = Date()
         
-        guard let date = inputFormatter.date(from: dateTimeString) else {
+        guard
+            let currentEntry = entries.min(by: { abs($0.date.timeIntervalSince(now)) < abs($1.date.timeIntervalSince(now)) }),
+            let firstWeather = currentEntry.weather.first,
+            let dateInfo = parseDateInfo(from: currentEntry.dtTxt)
+        else {
+            DispatchQueue.main.async {
+                self.presenter?.didFailFetchingWeather(NSError(domain: "", code: -1, userInfo: [NSLocalizedDescriptionKey: "Unable to determine current forecast"]))
+            }
+            return
+        }
+        
+        let groupedEntries = Dictionary(grouping: entries, by: { $0.dateString })
+        let sortedKeys = groupedEntries.keys.sorted().prefix(5)
+        
+        let forecastDay = sortedKeys.compactMap { self.makeForecast(from: groupedEntries[$0], isNight: false) }
+        let forecastNight = sortedKeys.compactMap { self.makeForecast(from: groupedEntries[$0], isNight: true) }
+        
+        let weatherData = WeatherDataModel(
+            city: city.name,
+            date: dateInfo.formattedDate,
+            isNight: dateInfo.isNight,
+            day: dateInfo.shortDayOfWeek,
+            currentTemp: "\(Int(currentEntry.main.temp))°",
+            condition: firstWeather.description,
+            conditionId: firstWeather.id,
+            symbolName: sfSymbolName(for: firstWeather.id, isNight: dateInfo.isNight),
+            forecastDay: forecastDay,
+            forecastNight: forecastNight
+        )
+        
+        DispatchQueue.main.async {
+            self.presenter?.didFetchWeather(weatherData, city: self.city)
+            self.interactorHistory?.addWeatherItem(weatherData)
+        }
+    }
+    
+    func makeForecast(from entries: [WeatherEntryModel]?, isNight: Bool) -> ForecastModel? {
+        guard
+            let entry = entries?.first(where: {
+                let hour = Calendar.current.component(.hour, from: $0.date)
+                return isNight ? (hour < 6 || hour >= 18) : (hour >= 6 && hour < 18)
+            }),
+            let weather = entry.weather.first,
+            let info = parseDateInfo(from: entry.dtTxt)
+        else {
             return nil
         }
         
-        let outputFormatter = DateFormatter()
-        outputFormatter.dateFormat = "MMM dd, yyyy"
-        let formattedDate = outputFormatter.string(from: date)
+        return ForecastModel(
+            date: info.formattedDate,
+            isNight: info.isNight,
+            day: info.shortDayOfWeek,
+            temp: "\(Int(entry.main.temp))°",
+            condition: weather.description,
+            conditionId: weather.id,
+            symbolName: sfSymbolName(for: weather.id, isNight: info.isNight)
+        )
+    }
+    
+    func parseDateInfo(from dateTimeString: String) -> (formattedDate: String, isNight: Bool, shortDayOfWeek: String)? {
+        guard let date = Self.inputFormatter.date(from: dateTimeString) else { return nil }
         
-        let shortDayFormatter = DateFormatter()
-        shortDayFormatter.dateFormat = "E" // short day format
-        let shortDayOfWeek = shortDayFormatter.string(from: date)
-        
+        let formattedDate = Self.outputFormatter.string(from: date)
+        let shortDayOfWeek = Self.shortDayFormatter.string(from: date)
         let hour = Calendar.current.component(.hour, from: date)
-        let isNight = (hour >= 6 && hour < 18) ? false : true
+        let isNight = !(6...17).contains(hour)
         
         return (formattedDate, isNight, shortDayOfWeek)
     }
+    
+    // MARK: - Static Date Formatters
+    
+    static let inputFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        formatter.timeZone = .current
+        return formatter
+    }()
+    
+    static let outputFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMM dd, yyyy"
+        return formatter
+    }()
+    
+    static let shortDayFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "E"
+        return formatter
+    }()
     
     func sfSymbolName(for id: Int, isNight: Bool) -> String {
         if isNight {
@@ -351,3 +376,4 @@ class WeatherInteractor: WeatherInteractorProtocol {
         }
     }
 }
+
