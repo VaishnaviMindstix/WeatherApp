@@ -8,7 +8,6 @@
 import Foundation
 import Combine
 import Foundation
-import WeatherAppUI
 
 protocol CitySearchPresenterProtocol: ObservableObject {
     var query: String { get set }

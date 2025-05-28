@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import WeatherAppUI
 
 protocol CitySearchInteractorProtocol {
     func fetchCitySuggestions(for query: String, completion: @escaping ([City], Error?) -> Void)

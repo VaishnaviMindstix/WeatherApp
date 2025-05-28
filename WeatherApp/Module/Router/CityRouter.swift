@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import WeatherAppUI
 
 final class CityRouter {
     static func build(onCitySelected: @escaping (City) -> Void) -> some View {

@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import WeatherAppUI
 
 struct CitySearchView: View {
     @ObservedObject var presenter: CitySearchPresenter

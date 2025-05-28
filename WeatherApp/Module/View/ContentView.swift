@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import WeatherAppUI
 
 struct ContentView: View {
     @State private var selectedCity: City?
