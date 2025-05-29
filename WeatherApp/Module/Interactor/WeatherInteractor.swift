@@ -21,7 +21,7 @@ class WeatherInteractor: WeatherInteractorProtocol {
     
     var city: CityModel = CityModel(
         name: "Pune",
-        localNames: LocalNamesModel(kn: "", mr: "", ru: "", ta: "", ur: "", ja: "", pa: "", hi: "", en: "", ar: "", ml: "", uk: ""),
+        localNames: LocalNamesModel(en: "Pune"),
         lat: 18.5204,
         lon: 73.8567,
         country: "IN",
@@ -73,26 +73,30 @@ class WeatherInteractor: WeatherInteractorProtocol {
                 return
             }
             
-            guard let data = data else {
-                DispatchQueue.main.async {
-                    self.presenter?.didFailFetchingWeather(WeatherError.noData)
-                }
-                return
-            }
-            
-            do {
-                let response = try JSONDecoder().decode(OpenWeatherResponseModel.self, from: data)
-                self.handleWeatherResponse(response)
-            } catch {
-                DispatchQueue.main.async {
-                    self.presenter?.didFailFetchingWeather(WeatherError.parsingError(error))
-                }
-            }
+            self.handleWeatherAPIResponse(data: data)
         }
         
         task.resume()
     }
     
+    func handleWeatherAPIResponse(data: Data?) {
+        guard let data = data else {
+            DispatchQueue.main.async {
+                self.presenter?.didFailFetchingWeather(WeatherError.noData)
+            }
+            return
+        }
+        
+        do {
+            let response = try JSONDecoder().decode(OpenWeatherResponseModel.self, from: data)
+            self.handleWeatherResponse(response)
+        } catch {
+            DispatchQueue.main.async {
+                self.presenter?.didFailFetchingWeather(WeatherError.parsingError(error))
+            }
+        }
+    }
+
     // MARK: - Helpers
     
     func makeWeatherURL() -> URL? {

@@ -1,258 +1,8 @@
-////
-////  WeatherInteractorTests.swift
-////
-////
-////  Created by Vaishnavi Deshmukh on 15/05/25.
-////
-//
-//import XCTest
-//@testable import WeatherApp
-//
-//final class WeatherInteractorTests: XCTestCase {
-//    var interactor: WeatherInteractor!
-//    var mockPresenter: MockWeatherPresenter!
-//    var mockHistoryInteractor: MockWeatherHistoryInteractor!
-//    let context = PersistenceController.shared.container.viewContext
-//
-//    override func setUp() {
-//        super.setUp()
-//        interactor = WeatherInteractor()
-//        mockPresenter = MockWeatherPresenter()
-//        mockHistoryInteractor = MockWeatherHistoryInteractor(context: context)
-//        interactor.presenter = mockPresenter
-//        interactor.interactorHistory = mockHistoryInteractor
-//        interactor.apiKey = Secrets.apiKey
-//    }
-//
-//    func testMakeWeatherURL() {
-//        let url = interactor.makeWeatherURL()
-//        XCTAssertNotNil(url)
-//        XCTAssertTrue(url?.absoluteString.contains("lat=18.5204") ?? false)
-//    }
-//
-//    func testFetchWeather_Success() {
-//        let jsonData = loadMockJSONData(named: "weather_response")!
-//        let url = interactor.makeWeatherURL()!
-//
-//        URLProtocolMock.testURLs = [url: jsonData]
-//        URLProtocolMock.response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
-//
-//        let config = URLSessionConfiguration.ephemeral
-//        config.protocolClasses = [URLProtocolMock.self]
-//        let mockSession = URLSession(configuration: config)
-//        interactor.urlSession = mockSession
-//
-//        mockPresenter.didFetchWeatherHandler = { data, city in
-//            XCTAssertEqual(data.city, "Pune")
-//        }
-//
-//        interactor.fetchWeather()
-//    }
-//
-//
-//    func testFetchWeather_NetworkFailure() {
-//        let url = interactor.makeWeatherURL()!
-//        URLProtocolMock.error = NSError(domain: "network", code: -1009, userInfo: nil)
-//
-//        let config = URLSessionConfiguration.ephemeral
-//        config.protocolClasses = [URLProtocolMock.self]
-//        let mockSession = URLSession(configuration: config)
-//        interactor.urlSession = mockSession
-//
-//        let expectation = self.expectation(description: "Error received")
-//
-//        mockPresenter.didFailFetchingWeatherHandler = { error in
-//            XCTAssertEqual((error as NSError).code, -1009)
-//            expectation.fulfill()
-//        }
-//
-//        interactor.fetchWeather()
-//        waitForExpectations(timeout: 2)
-//    }
-//
-//
-//
-//    func testFetchWeather_JSONDecodingFailure() {
-//        let invalidData = Data("Invalid JSON".utf8)
-//        let url = interactor.makeWeatherURL()!
-//        URLProtocolMock.testURLs = [url: invalidData]
-//
-//        let config = URLSessionConfiguration.ephemeral
-//        config.protocolClasses = [URLProtocolMock.self]
-//        let mockSession = URLSession(configuration: config)
-//        interactor.urlSession = mockSession
-//
-//        let expectation = self.expectation(description: "Decoding error received")
-//
-//        mockPresenter.didFailFetchingWeatherHandler = { error in
-//            expectation.fulfill()
-//        }
-//
-//        interactor.fetchWeather()
-//        waitForExpectations(timeout: 2)
-//    }
-//
-//    func testParseDateInfo() {
-//        let info = interactor.parseDateInfo(from: "2025-05-28 20:00:00")
-//        XCTAssertNotNil(info)
-//        XCTAssertEqual(info?.shortDayOfWeek.count, 3)
-//    }
-//
-//    func testSFSymbolName() {
-//        let symbol = interactor.sfSymbolName(for: 800, isNight: false)
-//        XCTAssertEqual(symbol, "sun.max.fill")
-//    }
-//
-//    func testMakeForecastDayAndNight() {
-//        let data = loadMockJSONData(named: "weather_response")!
-//        let decoded = try! JSONDecoder().decode(OpenWeatherResponseModel.self, from: data)
-//
-//        let grouped = Dictionary(grouping: decoded.list, by: { $0.dateString })
-//        let key = grouped.keys.sorted().first!
-//        let forecastDay = interactor.makeForecast(from: grouped[key], isNight: false)
-//        let forecastNight = interactor.makeForecast(from: grouped[key], isNight: true)
-//
-//        XCTAssertNotNil(forecastDay)
-//        XCTAssertNotNil(forecastNight)
-//    }
-//
-//    // Helper
-//    func loadMockJSONData(named name: String) -> Data? {
-//        let bundle = Bundle(for: type(of: self))
-//        guard let url = bundle.url(forResource: name, withExtension: "json") else { return nil }
-//        return try? Data(contentsOf: url)
-//    }
-//
-//    func testParseDateInfo_returnsCorrectValues() {
-//        let interactor = WeatherInteractor()
-//        let testDateTime = "2025-05-15 20:00:00"
-//
-//        let result = interactor.parseDateInfo(from: testDateTime)
-//
-//        XCTAssertNotNil(result)
-//        XCTAssertEqual(result?.formattedDate, "May 15, 2025")
-//        XCTAssertEqual(result?.shortDayOfWeek.count, 3)
-//        XCTAssertTrue(result!.isNight)
-//    }
-//
-//    func testSfSymbolName_forClearDay() {
-//        let interactor = WeatherInteractor()
-//        let symbol = interactor.sfSymbolName(for: 800, isNight: false)
-//        XCTAssertEqual(symbol, "sun.max.fill")
-//    }
-//
-//    func testSfSymbolName_forClearNight() {
-//        let interactor = WeatherInteractor()
-//        let symbol = interactor.sfSymbolName(for: 800, isNight: true)
-//        XCTAssertEqual(symbol, "moon.stars.fill")
-//    }
-//
-//    func test_handleWeatherResponse_success() {
-//        // Given
-//        let weather = WeatherModel(id: 800, description: "Clear")
-//        let main = MainModel(temp: 25.0)
-//        let now = Date()
-//        let entry = WeatherEntryModel(main: main, weather: [weather], dtTxt: WeatherInteractor.outputFormatter.string(from: now))
-//        let response = OpenWeatherResponseModel(list: [entry])
-//
-//        // When
-//        interactor.handleWeatherResponse(response)
-//
-//        // Then
-//        XCTAssertTrue(mockPresenter.didFetchWeatherCalled)
-//        XCTAssertEqual(mockPresenter.receivedCity?.name, "Test City")
-//    }
-//
-//    func test_handleWeatherResponse_fails_whenMissingWeather() {
-//        // Given
-//        let main = MainModel(temp: 25.0)
-//        let now = Date()
-//        let entry = WeatherEntryModel(main: main, weather: [], dtTxt: WeatherInteractor.outputFormatter.string(from: now))
-//        let response = OpenWeatherResponseModel(list: [entry])
-//
-//        // When
-//        interactor.handleWeatherResponse(response)
-//
-//        // Then
-//        XCTAssertTrue(mockPresenter.didFailFetchingWeatherCalled)
-//        XCTAssertFalse(mockPresenter.didFetchWeatherCalled)
-//    }
-//
-//    func test_handleWeatherResponse_fails_whenMissingDtTxt() {
-//        // Given
-//        let weather = WeatherModel(id: 800, description: "Clear")
-//        let main = MainModel(temp: 25.0)
-//        let entry = WeatherEntryModel(main: main, weather: [weather], dtTxt: "")
-//        let response = OpenWeatherResponseModel(list: [entry])
-//
-//        // When
-//        interactor.handleWeatherResponse(response)
-//
-//        // Then
-//        XCTAssertTrue(mockPresenter.didFailFetchingWeatherCalled)
-//    }
-//}
-//
-//
-//
-//
-//class MockWeatherPresenter: WeatherPresenterProtocol {
-//    var didFetchWeatherCalled = false
-//    var didFailFetchingWeatherCalled = false
-//    var receivedWeatherData: WeatherDataModel?
-//    var receivedCity: CityModel?
-//    var didFetchWeatherHandler: ((WeatherDataModel, CityModel) -> Void)?
-//    var didFailFetchingWeatherHandler: ((Error) -> Void)?
-//
-//    func didFetchWeather(_ weatherData: WeatherDataModel, city: CityModel) {
-//        didFetchWeatherCalled = true
-//        receivedWeatherData = weatherData
-//        receivedCity = city
-//        didFetchWeatherHandler?(weatherData, city)
-//    }
-//
-//    func didFailFetchingWeather(_ error: Error) {
-//        didFailFetchingWeatherCalled = true
-//        didFailFetchingWeatherHandler?(error)
-//    }
-//}
-//
-//
-//class MockWeatherHistoryInteractor: WeatherHistoryInteractor {
-//    var addedWeather: WeatherDataModel?
-//
-//    override func addWeatherItem(_ data: WeatherDataModel) {
-//        addedWeather = data
-//    }
-//}
-//
-//
-//class URLProtocolMock: URLProtocol {
-//    static var testURLs = [URL?: Data]()
-//    static var response: URLResponse?
-//    static var error: Error?
-//
-//    override class func canInit(with request: URLRequest) -> Bool { true }
-//
-//    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
-//
-//    override func startLoading() {
-//        if let error = URLProtocolMock.error {
-//            self.client?.urlProtocol(self, didFailWithError: error)
-//        } else {
-//            let data = URLProtocolMock.testURLs[request.url] ?? Data()
-//            self.client?.urlProtocol(self, didReceive: URLProtocolMock.response ?? URLResponse(), cacheStoragePolicy: .notAllowed)
-//            self.client?.urlProtocol(self, didLoad: data)
-//        }
-//        self.client?.urlProtocolDidFinishLoading(self)
-//    }
-//
-//    override func stopLoading() {}
-//}
-
-
 //
 //  WeatherInteractorTests.swift
+//
+//
+//  Created by Vaishnavi Deshmukh on 15/05/25.
 //
 
 import XCTest
@@ -400,6 +150,125 @@ final class WeatherInteractorTests: XCTestCase {
         guard let url = bundle.url(forResource: name, withExtension: "json") else { return nil }
         return try? Data(contentsOf: url)
     }
+    
+    // MARK: - Response Handling Tests
+    
+
+    func testHandleWeatherResponse_validData() {
+        let data = loadMockJSONData(named: "weather_response")!
+        let response = try! JSONDecoder().decode(OpenWeatherResponseModel.self, from: data)
+        
+        interactor.city = CityModel(name: "Pune", localNames: LocalNamesModel(en: "Pune"), lat: 48.8566, lon: 2.3522, country: "FR", state: "Mh")
+        
+        let expectation = self.expectation(description: "Valid response processed")
+        
+        mockPresenter.didFetchWeatherHandler = { weather, city in
+            XCTAssertEqual(city.name, "Pune")
+            XCTAssertEqual(weather.city, "Pune")
+            expectation.fulfill()
+        }
+        
+        interactor.handleWeatherResponse(response)
+        
+        waitForExpectations(timeout: 1)
+    }
+
+    
+    func testHandleWeatherResponse_emptyList_shouldFail() {
+        let response = OpenWeatherResponseModel(list: [])
+        
+        let expectation = self.expectation(description: "Failed due to missing current entry")
+        
+        mockPresenter.didFailFetchingWeatherHandler = { error in
+            XCTAssertEqual(error.localizedDescription, "Unable to determine current forecast")
+            expectation.fulfill()
+        }
+        
+        interactor.handleWeatherResponse(response)
+        
+        waitForExpectations(timeout: 1)
+    }
+
+    func testHandleWeatherResponse_missingWeather_shouldFail() {
+        let main = MainModel(temp: 25)
+        let now = Date()
+        let entry = WeatherEntryModel(main: main,
+                                         weather: [],
+                                      dtTxt: WeatherInteractor.outputFormatter.string(from: now))
+        let response = OpenWeatherResponseModel(list: [entry])
+        
+        let expectation = self.expectation(description: "Failed due to missing weather")
+        
+        mockPresenter.didFailFetchingWeatherHandler = { error in
+            XCTAssertEqual(error.localizedDescription, "Unable to determine current forecast")
+            expectation.fulfill()
+        }
+        
+        interactor.handleWeatherResponse(response)
+        
+        waitForExpectations(timeout: 1)
+    }
+
+    
+    func testHandleWeatherResponse_invalidDateString_shouldFail() {
+        
+        let weather = WeatherModel(id: 800, description: "Clear")
+        let main = MainModel(temp: 20)
+        let now = Date()
+        let entry = WeatherEntryModel(main: main,
+                                         weather: [weather],
+                                         dtTxt: "Invalid-Date")
+        let response = OpenWeatherResponseModel(list: [entry])
+        
+        let expectation = self.expectation(description: "Failed due to invalid date string")
+        
+        mockPresenter.didFailFetchingWeatherHandler = { error in
+            XCTAssertEqual(error.localizedDescription, "Unable to determine current forecast")
+            expectation.fulfill()
+        }
+        
+        interactor.handleWeatherResponse(response)
+        
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testFetchWeather_dataIsNil_shouldReturnNoDataError() {
+        let expectation = self.expectation(description: "Expecting noData error")
+        
+        mockPresenter.didFailFetchingWeatherHandler = { error in
+            if case WeatherError.noData = error {
+                expectation.fulfill()
+            } else {
+                XCTFail("Expected noData error")
+            }
+        }
+        
+        interactor.presenter = mockPresenter
+        interactor.handleWeatherAPIResponse(data: nil)
+        
+        waitForExpectations(timeout: 1)
+    }
+    
+    func testFetchWeather_invalidJSON_shouldReturnParsingError() {
+        let expectation = self.expectation(description: "Expecting parsing error")
+        
+        mockPresenter.didFailFetchingWeatherHandler = { error in
+            if case WeatherError.parsingError = error {
+                expectation.fulfill()
+            } else {
+                XCTFail("Expected parsingError")
+            }
+        }
+        
+        let invalidData = Data("Invalid JSON".utf8)
+        interactor.presenter = mockPresenter
+        interactor.handleWeatherAPIResponse(data: invalidData)
+        
+        waitForExpectations(timeout: 1)
+    }
+
+
+
 }
 
 // MARK: - Mocks

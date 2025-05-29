@@ -92,7 +92,7 @@ struct WeatherModel: Codable {
 }
 
     
-struct CityModel: Identifiable, Decodable {
+struct CityModel: Codable, Equatable, Identifiable  {
     let id = UUID()
     let name: String
     let localNames: LocalNamesModel?
@@ -104,11 +104,16 @@ struct CityModel: Identifiable, Decodable {
         case localNames = "local_names"
         case lat, lon, country, state
     }
+    
+    public static func == (lhs: CityModel, rhs: CityModel) -> Bool {
+        return lhs.name == rhs.name
+    }
+
 }
 
 
 struct LocalNamesModel: Codable {
-    let kn, mr, ru, ta, ur, ja, pa, hi, en, ar, ml, uk: String?
+    let en: String?
 }
 
 enum WeatherError: Error {

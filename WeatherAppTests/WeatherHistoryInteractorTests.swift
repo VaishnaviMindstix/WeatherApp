@@ -10,9 +10,8 @@ import CoreData
 @testable import WeatherApp
 
 final class WeatherHistoryInteractorTests: XCTestCase {
-    
-    var context: NSManagedObjectContext!
     var interactor: WeatherHistoryInteractor!
+    var context: NSManagedObjectContext!
     
     override func setUp() {
         super.setUp()
@@ -21,118 +20,89 @@ final class WeatherHistoryInteractorTests: XCTestCase {
         description.type = NSInMemoryStoreType
         container.persistentStoreDescriptions = [description]
         
-        let expectation = self.expectation(description: "Load persistent stores")
+        let exp = expectation(description: "Load persistent stores")
         container.loadPersistentStores { _, error in
             XCTAssertNil(error)
-            expectation.fulfill()
+            exp.fulfill()
         }
-        waitForExpectations(timeout: 1)
+        wait(for: [exp], timeout: 2.0)
         
         context = container.viewContext
         interactor = WeatherHistoryInteractor(context: context)
     }
-
     
     override func tearDown() {
-        interactor = nil
         context = nil
+        interactor = nil
         super.tearDown()
     }
     
-    func testAddWeatherItem_addsNewItem() {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM dd, yyyy"
-        let today = formatter.string(from: Date())
-        
-        let model = WeatherDataModel(
-            city: "New York",
-            date: today,
-            isNight: false,
-            day: "Monday",
-            currentTemp: "25",
-            condition: "Clear",
-            conditionId: 800,
-            symbolName: "sun.max",
-            forecastDay: [],
-            forecastNight: []
-        )
+    func testFetchWeatherItems_whenNoItems_returnsEmptyArray() {
+        let items = interactor.fetchWeatherItems()
+        XCTAssertEqual(items.count, 0)
+    }
+    
+    func testAddWeatherItem_withValidData_addsItem() {
+        let model = WeatherDataModel(city: "Paris", date: "May 20, 2025", isNight: false, day: "Tuesday", currentTemp: "22", condition: "Clear", conditionId: 800, symbolName: "sun.max", forecastDay: [], forecastNight: [])
         
         interactor.addWeatherItem(model)
         
-        let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
-        let results = try? context.fetch(fetchRequest)
-        
-        XCTAssertEqual(results?.count, 1)
-        XCTAssertEqual(results?.first?.city, "New York")
-        XCTAssertEqual(results?.first?.date, today)
+        let items = interactor.fetchWeatherItems()
+        XCTAssertEqual(items.count, 1)
+        XCTAssertEqual(items.first?.city, "Paris")
     }
     
-    func testAddWeatherItem_doesNotAddDuplicate() {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMM dd, yyyy"
-        let today = formatter.string(from: Date())
-        
-        let model = WeatherDataModel(
-            city: "New York",
-            date: today,
-            isNight: false,
-            day: "Monday",
-            currentTemp: "25",
-            condition: "Clear",
-            conditionId: 800,
-            symbolName: "sun.max",
-            forecastDay: [],
-            forecastNight: []
-        )
+    func testAddWeatherItem_withDuplicate_doesNotAdd() {
+        let model = WeatherDataModel(city: "Paris", date: "May 20, 2025", isNight: false, day: "Tuesday", currentTemp: "22", condition: "Clear", conditionId: 800, symbolName: "sun.max", forecastDay: [], forecastNight: [])
         
         interactor.addWeatherItem(model)
-        interactor.addWeatherItem(model) // try adding again
+        interactor.addWeatherItem(model)
         
-        let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
-        let results = try? context.fetch(fetchRequest)
-        
-        XCTAssertEqual(results?.count, 1)
+        let items = interactor.fetchWeatherItems()
+        XCTAssertEqual(items.count, 1)
     }
     
-    func testAddWeatherItem_deletesItemsOlderThan10Days() {
+    func testAddWeatherItem_withInvalidDate_doesNotAdd() {
+        let model = WeatherDataModel(city: "London", date: "Invalid Date", isNight: false, day: "Tuesday", currentTemp: "18", condition: "Rain", conditionId: 500, symbolName: "cloud.rain", forecastDay: [], forecastNight: [])
+        
+        interactor.addWeatherItem(model)
+        
+        let items = interactor.fetchWeatherItems()
+        XCTAssertEqual(items.count, 0)
+    }
+    
+    func testAddWeatherItem_removesOldItems() {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMM dd, yyyy"
+        
         let oldDate = formatter.string(from: Calendar.current.date(byAdding: .day, value: -11, to: Date())!)
-        let newDate = formatter.string(from: Date())
+        let recentDate = formatter.string(from: Date())
         
-        let oldItem = WeatherDataModel(
-            city: "OldCity",
-            date: oldDate,
-            isNight: false,
-            day: "OldDay",
-            currentTemp: "10",
-            condition: "Cloudy",
-            conditionId: 801,
-            symbolName: "cloud",
-            forecastDay: [],
-            forecastNight: []
-        )
+        let oldModel = WeatherDataModel(city: "OldCity", date: oldDate, isNight: false, day: "OldDay", currentTemp: "5", condition: "Snow", conditionId: 600, symbolName: "snow", forecastDay: [], forecastNight: [])
+        let newModel = WeatherDataModel(city: "NewCity", date: recentDate, isNight: false, day: "Today", currentTemp: "20", condition: "Cloudy", conditionId: 802, symbolName: "cloud", forecastDay: [], forecastNight: [])
         
-        let newItem = WeatherDataModel(
-            city: "NewCity",
-            date: newDate,
-            isNight: false,
-            day: "Today",
-            currentTemp: "20",
-            condition: "Sunny",
-            conditionId: 800,
-            symbolName: "sun.max",
-            forecastDay: [],
-            forecastNight: []
-        )
+        interactor.addWeatherItem(oldModel)
+        interactor.addWeatherItem(newModel)
         
-        interactor.addWeatherItem(oldItem)
-        interactor.addWeatherItem(newItem)
+        let items = interactor.fetchWeatherItems()
+        XCTAssertEqual(items.count, 1)
+        XCTAssertEqual(items.first?.city, "NewCity")
+    }
+    
+    func testDeleteItem_removesCorrectItem() {
+        let model1 = WeatherDataModel(city: "A", date: "May 20, 2025", isNight: false, day: "Monday", currentTemp: "20", condition: "Clear", conditionId: 800, symbolName: "sun.max", forecastDay: [], forecastNight: [])
+        let model2 = WeatherDataModel(city: "B", date: "May 21, 2025", isNight: false, day: "Tuesday", currentTemp: "21", condition: "Cloudy", conditionId: 801, symbolName: "cloud", forecastDay: [], forecastNight: [])
         
-        let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
-        let results = try? context.fetch(fetchRequest)
+        interactor.addWeatherItem(model1)
+        interactor.addWeatherItem(model2)
         
-        XCTAssertEqual(results?.count, 1)
-        XCTAssertEqual(results?.first?.city, "NewCity")
+        var items = interactor.fetchWeatherItems()
+        XCTAssertEqual(items.count, 2)
+        
+        interactor.deleteItem(at: IndexSet(integer: 0))
+        
+        items = interactor.fetchWeatherItems()
+        XCTAssertEqual(items.count, 1)
+        XCTAssertEqual(items.first?.city, "B")
     }
 }
